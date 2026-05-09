@@ -592,57 +592,6 @@
   max-width: 540px;
 }
 
-.about-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 360px);
-  gap: 24px var(--layout-gap);
-  align-items: start;
-}
-
-.about-layout__title {
-  grid-column: 1;
-  grid-row: 1;
-  margin-bottom: 0;
-}
-
-.about-layout__lead {
-  grid-column: 1;
-  grid-row: 2;
-  margin: 0 0 24px;
-  max-width: 52ch;
-}
-
-.about-layout__cards {
-  grid-column: 1;
-  grid-row: 3;
-}
-
-.about-layout__aside {
-  grid-column: 2;
-  grid-row: 1 / span 3;
-  align-self: stretch;
-  min-width: 0;
-}
-
-.services-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
-  gap: var(--layout-gap);
-  align-items: start;
-}
-
-.services-layout__head {
-  min-width: 0;
-}
-
-.services-layout__head .section__lead--narrow {
-  max-width: none;
-}
-
-.services-layout__col {
-  min-width: 0;
-}
-
 .cards {
   list-style: none;
   margin: 0;
@@ -1015,10 +964,6 @@
   font-weight: 700;
   font-size: 1.02rem;
   color: var(--color-heading);
-}
-
-.section__banner {
-  margin-top: 36px;
 }
 
 .hours-table {
@@ -1444,65 +1389,6 @@
   }
 }
 
-.media-ph {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius);
-  border: 1px dashed var(--color-border-strong);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 90%, var(--color-accent)) 0%, var(--color-surface) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 120px;
-}
-
-.media-ph--hero {
-  min-height: 280px;
-  aspect-ratio: 4 / 3;
-}
-
-.media-ph--wide {
-  min-height: 180px;
-  aspect-ratio: 21 / 9;
-}
-
-.media-ph--square {
-  aspect-ratio: 1;
-  min-height: 200px;
-}
-
-.media-ph__shine {
-  position: absolute;
-  inset: 0;
-  width: 40%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    color-mix(in srgb, #fff 35%, transparent) 45%,
-    transparent 90%
-  );
-  pointer-events: none;
-}
-
-.media-ph__shine--static {
-  opacity: 0.25;
-  width: 100%;
-  background: linear-gradient(135deg, transparent 40%, color-mix(in srgb, #fff 12%, transparent) 50%, transparent 60%);
-}
-
-.media-ph__cap {
-  position: relative;
-  z-index: 1;
-  padding: 16px 20px;
-  text-align: center;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--color-muted);
-  max-width: 90%;
-  line-height: 1.4;
-}
-
 .footer {
   margin-top: auto;
   padding: 40px 24px;
@@ -1593,28 +1479,6 @@
 
   .hero__bullets {
     margin-inline: auto;
-  }
-
-  .about-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .about-layout__title,
-  .about-layout__lead,
-  .about-layout__cards,
-  .about-layout__aside {
-    grid-column: 1;
-    grid-row: auto;
-  }
-
-  .about-layout__aside {
-    max-width: 360px;
-    margin-inline: auto;
-    width: 100%;
-  }
-
-  .services-layout {
-    grid-template-columns: 1fr;
   }
 
   .services-grid {

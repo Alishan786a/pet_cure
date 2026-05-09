@@ -40,7 +40,6 @@ import {
   EASE,
   fadeUp,
   fadeUpTight,
-  scaleIn,
   slideInRight,
   springPop,
   springSnappy,
@@ -61,37 +60,6 @@ const SERVICE_ICONS = [FaStethoscope, FaHeartPulse, FaSyringe, FaStore] as const
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-}
-
-function MediaPlaceholder({
-  label,
-  variant = 'wide',
-  reduceMotion,
-}: {
-  label: string
-  variant?: 'hero' | 'wide' | 'square'
-  reduceMotion: boolean
-}) {
-  return (
-    <div
-      className={`media-ph media-ph--${variant}`}
-      role="img"
-      aria-label={label}
-    >
-      {reduceMotion ? (
-        <div className="media-ph__shine media-ph__shine--static" aria-hidden />
-      ) : (
-        <motion.div
-          className="media-ph__shine"
-          aria-hidden
-          initial={{ x: '-100%' }}
-          animate={{ x: '200%' }}
-          transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut' }}
-        />
-      )}
-      <span className="media-ph__cap">{label}</span>
-    </div>
-  )
 }
 
 const NAV: { id: string; label: string }[] = [
@@ -480,24 +448,20 @@ export default function App() {
           transition={transitionBase(r, 0.5)}
         >
           <motion.div
-            className="section__inner about-layout"
+            className="section__inner"
             variants={staggerContainer(r, 0.1, 0.03)}
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
           >
-            <motion.h2
-              id="about-heading"
-              className="section__title section__title--row about-layout__title"
-              variants={fadeUp(r)}
-            >
+            <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
               <FaPaw className="section__title-ico" aria-hidden />
               {site.about.title}
             </motion.h2>
-            <motion.p className="section__lead about-layout__lead" variants={fadeUp(r)}>
+            <motion.p className="section__lead" variants={fadeUp(r)}>
               {site.about.lead}
             </motion.p>
-            <motion.ul className="cards about-layout__cards" variants={staggerContainer(r, 0.1, 0)}>
+            <motion.ul className="cards" variants={staggerContainer(r, 0.1, 0)}>
               {site.about.points.map((p, i) => {
                 const AboutIcon = ABOUT_ICONS[i]
                 return (
@@ -524,13 +488,6 @@ export default function App() {
                 )
               })}
             </motion.ul>
-            <motion.div className="about-layout__aside" variants={scaleIn(r)}>
-              <MediaPlaceholder
-                label="Team or clinic interior — replace with your image"
-                variant="square"
-                reduceMotion={r}
-              />
-            </motion.div>
           </motion.div>
         </motion.section>
 
@@ -544,58 +501,49 @@ export default function App() {
           transition={transitionBase(r, 0.45)}
         >
           <motion.div
-            className="section__inner services-layout"
+            className="section__inner"
             variants={staggerContainer(r, 0.1, 0.04)}
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
           >
-            <motion.div className="services-layout__head" variants={fadeUp(r)}>
-              <h2 id="services-heading" className="section__title section__title--row">
-                <FaStethoscope className="section__title-ico" aria-hidden />
-                {site.services.title}
-              </h2>
-              <p className="section__lead section__lead--narrow">{site.services.subtitle}</p>
-            </motion.div>
-            <motion.div className="services-layout__col" variants={fadeUp(r)}>
-              <motion.div className="services-grid" variants={staggerContainer(r, 0.09, 0.02)}>
-                {site.services.items.map((item, i) => {
-                  const SvcIcon = SERVICE_ICONS[i]
-                  return (
-                    <motion.article
-                      key={item}
-                      className="service-card"
-                      variants={fadeUpTight(r)}
-                      whileHover={
-                        r
-                          ? undefined
-                          : {
-                              y: -8,
-                              scale: 1.02,
-                              boxShadow: '0 20px 48px rgb(18 16 14 / 14%)',
-                            }
-                      }
-                      whileTap={r ? undefined : { scale: 0.98 }}
-                      transition={springSoft}
-                    >
-                      <div className="service-card__top">
-                        <SvcIcon className="service-card__ico" aria-hidden />
-                        <span className="service-card__num" aria-hidden>
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                      </div>
-                      <p className="service-card__text">{item}</p>
-                    </motion.article>
-                  )
-                })}
-              </motion.div>
-              <motion.div className="section__banner" variants={scaleIn(r)}>
-                <MediaPlaceholder
-                  label="Services or equipment — replace with your image"
-                  variant="wide"
-                  reduceMotion={r}
-                />
-              </motion.div>
+            <motion.h2 id="services-heading" className="section__title section__title--row" variants={fadeUp(r)}>
+              <FaStethoscope className="section__title-ico" aria-hidden />
+              {site.services.title}
+            </motion.h2>
+            <motion.p className="section__lead section__lead--narrow" variants={fadeUp(r)}>
+              {site.services.subtitle}
+            </motion.p>
+            <motion.div className="services-grid" variants={staggerContainer(r, 0.09, 0.02)}>
+              {site.services.items.map((item, i) => {
+                const SvcIcon = SERVICE_ICONS[i]
+                return (
+                  <motion.article
+                    key={item}
+                    className="service-card"
+                    variants={fadeUpTight(r)}
+                    whileHover={
+                      r
+                        ? undefined
+                        : {
+                            y: -8,
+                            scale: 1.02,
+                            boxShadow: '0 20px 48px rgb(18 16 14 / 14%)',
+                          }
+                    }
+                    whileTap={r ? undefined : { scale: 0.98 }}
+                    transition={springSoft}
+                  >
+                    <div className="service-card__top">
+                      <SvcIcon className="service-card__ico" aria-hidden />
+                      <span className="service-card__num" aria-hidden>
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <p className="service-card__text">{item}</p>
+                  </motion.article>
+                )
+              })}
             </motion.div>
           </motion.div>
         </motion.section>
