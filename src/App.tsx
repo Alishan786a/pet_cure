@@ -24,7 +24,11 @@ import {
   FaSyringe,
   FaTruckMedical,
 } from 'react-icons/fa6'
-import clinicHero from './assets/cat.jpg'
+import heroBg1 from './assets/cat.jpg'
+import heroBg2 from './assets/cat2.jpg'
+import heroBg3 from './assets/cat3.jpg'
+import heroBg4 from './assets/cat4.jpg'
+import medicalStoreBg from './assets/medical-store.png'
 import logo from './assets/logo.jpeg'
 import { ContactForm } from './ContactForm'
 import { DraggableWhatsApp } from './DraggableWhatsApp'
@@ -32,6 +36,7 @@ import { site, getSiteUrl } from './siteContent'
 import { buildLocalBusinessJsonLd } from './seoJsonLd'
 import {
   blurIn,
+  EASE,
   fadeUp,
   fadeUpTight,
   scaleIn,
@@ -44,6 +49,8 @@ import {
   viewportOnce,
 } from './motionPresets'
 import './App.css'
+
+const HERO_BG_IMAGES = [heroBg1, heroBg2, heroBg3, heroBg4] as const
 
 const ABOUT_ICONS = [FaHouseMedical, FaTruckMedical, FaPills] as const
 const SERVICE_ICONS = [FaStethoscope, FaHeartPulse, FaSyringe, FaStore] as const
@@ -96,9 +103,13 @@ export default function App() {
   const [headerOnHero, setHeaderOnHero] = useState(true)
   const heroRef = useRef<HTMLElement | null>(null)
   const heroBgIntroDone = useRef(false)
+  const aboutRef = useRef<HTMLElement | null>(null)
+  const aboutBgIntroDone = useRef(false)
   const reduceMotion = useReducedMotion()
   const r = !!reduceMotion
   const [heroShowContent, setHeroShowContent] = useState(r)
+  const [heroSlide, setHeroSlide] = useState(0)
+  const [aboutShowContent, setAboutShowContent] = useState(r)
 
   const { scrollY, scrollYProgress } = useScroll()
   const scrollBar = useSpring(scrollYProgress, {
@@ -113,8 +124,17 @@ export default function App() {
   })
   const heroParallaxY = useTransform(heroScroll, [0, 1], [0, r ? 0 : 52])
 
+  const { scrollYProgress: aboutScroll } = useScroll({
+    target: aboutRef,
+    offset: ['start end', 'end start'],
+  })
+  const aboutParallaxY = useTransform(aboutScroll, [0, 1], [0, r ? 0 : 40])
+
   useEffect(() => {
-    if (r) setHeroShowContent(true)
+    if (r) {
+      setHeroShowContent(true)
+      setAboutShowContent(true)
+    }
   }, [r])
 
   useEffect(() => {
@@ -124,6 +144,15 @@ export default function App() {
     }, 1600)
     return () => window.clearTimeout(fallback)
   }, [r])
+
+  useEffect(() => {
+    if (r) return
+    if (!heroShowContent) return
+    const id = window.setInterval(() => {
+      setHeroSlide((i) => (i + 1) % HERO_BG_IMAGES.length)
+    }, 6500)
+    return () => window.clearInterval(id)
+  }, [r, heroShowContent])
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     const el = heroRef.current
@@ -315,26 +344,37 @@ export default function App() {
 
       <main id="main">
         <section ref={heroRef} className="hero hero--cinema" aria-labelledby="hero-heading">
-          <motion.div
-            className="hero__bg"
-            aria-hidden
-            initial={r ? false : { opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={
-              r
-                ? { duration: 0 }
-                : { duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }
-            }
-            style={{
-              backgroundImage: `url(${clinicHero})`,
-              y: heroParallaxY,
-            }}
-            onAnimationComplete={() => {
-              if (r || heroBgIntroDone.current) return
-              heroBgIntroDone.current = true
-              setHeroShowContent(true)
-            }}
-          />
+          <motion.div className="hero__bg-stack" style={{ y: heroParallaxY }}>
+            <AnimatePresence mode="sync">
+              <motion.div
+                key={heroSlide}
+                className="hero__bg"
+                aria-hidden
+                initial={r ? false : { opacity: 0, scale: heroSlide === 0 ? 1.08 : 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={
+                  r
+                    ? undefined
+                    : { opacity: 0, scale: 1.02, transition: { duration: 0.78, ease: EASE } }
+                }
+                transition={
+                  r
+                    ? { duration: 0 }
+                    : heroSlide === 0
+                      ? { duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }
+                      : { duration: 0.85, ease: EASE }
+                }
+                style={{
+                  backgroundImage: `url(${HERO_BG_IMAGES[heroSlide]})`,
+                }}
+                onAnimationComplete={() => {
+                  if (r || heroBgIntroDone.current) return
+                  heroBgIntroDone.current = true
+                  setHeroShowContent(true)
+                }}
+              />
+            </AnimatePresence>
+          </motion.div>
           <div className="hero__scrim" aria-hidden />
           <div className="hero__inner">
             <motion.div
@@ -392,39 +432,57 @@ export default function App() {
           </div>
         </section>
 
-        <motion.section
+        <section
+          ref={aboutRef}
           id="about"
-          className="section section--alt"
+          className="about-cinema"
           aria-labelledby="about-heading"
-          initial={r ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={viewportOnce}
-          transition={transitionBase(r, 0.5)}
         >
           <motion.div
-            className="section__inner"
-            variants={staggerContainer(r, 0.09, 0.02)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-          >
-            <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
-              <FaPaw className="section__title-ico" aria-hidden />
-              {site.about.title}
-            </motion.h2>
-            <motion.p className="section__lead" variants={fadeUp(r)}>
-              {site.about.lead}
-            </motion.p>
-            <motion.div className="about-split" variants={staggerContainer(r, 0.14, 0.06)}>
-              <motion.ul className="cards" variants={staggerContainer(r, 0.1, 0)}>
+            className="about-cinema__bg"
+            aria-hidden
+            initial={r ? false : { opacity: 0, scale: 1.08 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.28 }}
+            transition={
+              r
+                ? { duration: 0 }
+                : { duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }
+            }
+            style={{
+              backgroundImage: `url(${medicalStoreBg})`,
+              y: aboutParallaxY,
+            }}
+            onAnimationComplete={() => {
+              if (r || aboutBgIntroDone.current) return
+              aboutBgIntroDone.current = true
+              setAboutShowContent(true)
+            }}
+          />
+          <div className="about-cinema__scrim" aria-hidden />
+          <div className="section__inner about-cinema__inner">
+            <motion.div
+              className="about-cinema__copy"
+              variants={staggerContainer(r, 0.11, 0.06)}
+              initial="hidden"
+              animate={aboutShowContent ? 'visible' : 'hidden'}
+            >
+              <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
+                <FaPaw className="section__title-ico" aria-hidden />
+                {site.about.title}
+              </motion.h2>
+              <motion.p className="section__lead" variants={fadeUp(r)}>
+                {site.about.lead}
+              </motion.p>
+              <motion.ul className="cards about-cinema__cards" variants={staggerContainer(r, 0.1, 0)}>
                 {site.about.points.map((p, i) => {
                   const AboutIcon = ABOUT_ICONS[i]
                   return (
                     <motion.li
                       key={p.title}
-                      className="card"
+                      className="card card--on-dark"
                       variants={slideInRight(r)}
-                      whileHover={r ? undefined : { y: -6, boxShadow: '0 16px 40px rgb(18 16 14 / 12%)' }}
+                      whileHover={r ? undefined : { y: -6, boxShadow: '0 20px 48px rgb(0 0 0 / 28%)' }}
                       whileTap={r ? undefined : { scale: 0.99 }}
                       transition={springSoft}
                     >
@@ -443,16 +501,9 @@ export default function App() {
                   )
                 })}
               </motion.ul>
-              <motion.div variants={scaleIn(r)}>
-                <MediaPlaceholder
-                  label="Team or clinic interior — replace with your image"
-                  variant="square"
-                  reduceMotion={r}
-                />
-              </motion.div>
             </motion.div>
-          </motion.div>
-        </motion.section>
+          </div>
+        </section>
 
         <motion.section
           id="services"
