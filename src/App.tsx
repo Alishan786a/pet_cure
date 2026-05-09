@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import {
   AnimatePresence,
   motion,
+  type Variants,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
@@ -18,6 +19,7 @@ import {
   FaPaw,
   FaPhone,
   FaPills,
+  FaQuoteLeft,
   FaStar,
   FaStethoscope,
   FaStore,
@@ -50,6 +52,9 @@ import {
 import './App.css'
 
 const HERO_BG_IMAGES = [heroBg1, heroBg2, heroBg3, heroBg4] as const
+
+/** Testimonial autoplay + progress bar (keep in sync with CSS `var(--testimonial-ms)` fallback). */
+const TESTIMONIAL_AUTO_MS = 3600
 
 const ABOUT_ICONS = [FaHouseMedical, FaTruckMedical, FaPills] as const
 const SERVICE_ICONS = [FaStethoscope, FaHeartPulse, FaSyringe, FaStore] as const
@@ -92,6 +97,7 @@ function MediaPlaceholder({
 const NAV: { id: string; label: string }[] = [
   { id: 'about', label: 'About' },
   { id: 'services', label: 'Services' },
+  { id: 'testimonials', label: 'Reviews' },
   { id: 'hours', label: 'Hours' },
   { id: 'contact', label: 'Contact' },
 ]
@@ -106,6 +112,9 @@ export default function App() {
   const r = !!reduceMotion
   const [heroShowContent, setHeroShowContent] = useState(r)
   const [heroSlide, setHeroSlide] = useState(0)
+  const [testimonialIndex, setTestimonialIndex] = useState(0)
+  const [testimonialDir, setTestimonialDir] = useState(1)
+  const [testimonialsPaused, setTestimonialsPaused] = useState(false)
 
   const { scrollY, scrollYProgress } = useScroll()
   const scrollBar = useSpring(scrollYProgress, {
@@ -140,6 +149,25 @@ export default function App() {
     }, 6500)
     return () => window.clearInterval(id)
   }, [r, heroShowContent])
+
+  const testimonialList = site.testimonials.items
+  const testimonialLen = testimonialList.length
+
+  const goTestimonial = useCallback(
+    (delta: number) => {
+      setTestimonialDir(delta > 0 ? 1 : -1)
+      setTestimonialIndex((i) => (i + delta + testimonialLen) % testimonialLen)
+    },
+    [testimonialLen],
+  )
+
+  useEffect(() => {
+    if (r || testimonialsPaused || testimonialLen < 2) return
+    const id = window.setInterval(() => {
+      goTestimonial(1)
+    }, TESTIMONIAL_AUTO_MS)
+    return () => window.clearInterval(id)
+  }, [r, testimonialsPaused, testimonialLen, goTestimonial])
 
   useMotionValueEvent(scrollY, 'change', (y) => {
     const el = heroRef.current
@@ -215,6 +243,29 @@ export default function App() {
   const tagParts = site.tagline.split(' — ')
   const heroTitleMain = tagParts[0]?.trim() ?? site.tagline
   const heroTitleSub = tagParts.length > 1 ? tagParts.slice(1).join(' — ').trim() : ''
+
+  const testimonialSlideVariants: Variants = {
+    enter: (dir: number) =>
+      r
+        ? { opacity: 0 }
+        : { x: dir > 0 ? 64 : -64, opacity: 0, filter: 'blur(12px)' },
+    center: { x: 0, opacity: 1, filter: 'blur(0px)' },
+    exit: (dir: number) =>
+      r
+        ? { opacity: 0 }
+        : { x: dir < 0 ? 64 : -64, opacity: 0, filter: 'blur(8px)' },
+  }
+
+  const activeTestimonial = testimonialList[testimonialIndex]
+  const testimonialReviewTrim = activeTestimonial.review.trim()
+  const testimonialCardTone =
+    testimonialReviewTrim.length > 160
+      ? ' testimonial-card--long'
+      : !testimonialReviewTrim
+        ? ' testimonial-card--empty'
+        : testimonialReviewTrim.length < 120
+          ? ' testimonial-card--short'
+          : ' testimonial-card--medium'
 
   return (
     <div className="site">
@@ -545,6 +596,116 @@ export default function App() {
                   reduceMotion={r}
                 />
               </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.section>
+
+        <motion.section
+          id="testimonials"
+          className="section testimonials"
+          aria-labelledby="testimonials-heading"
+          initial={r ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportOnce}
+          transition={transitionBase(r, 0.55)}
+        >
+          <motion.div
+            className="section__inner testimonials__inner"
+            variants={staggerContainer(r, 0.14, 0.08)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
+            <motion.div className="testimonials__intro" variants={fadeUp(r)}>
+              <h2 id="testimonials-heading" className="section__title section__title--row">
+                <FaQuoteLeft className="section__title-ico" aria-hidden />
+                {site.testimonials.title}
+              </h2>
+              <p className="section__lead testimonials__lead">{site.testimonials.lead}</p>
+            </motion.div>
+            <motion.div className="testimonials__slider-shell" variants={fadeUp(r)}>
+              <div
+                className={`testimonials__slider ${testimonialsPaused ? 'is-paused' : ''}`}
+                style={{ '--testimonial-ms': `${TESTIMONIAL_AUTO_MS}ms` } as CSSProperties}
+                onPointerEnter={() => testimonialLen > 1 && setTestimonialsPaused(true)}
+                onPointerLeave={() => setTestimonialsPaused(false)}
+              >
+                <div
+                  className="testimonials__viewport"
+                  role="region"
+                  aria-roledescription="carousel"
+                  aria-label="Client reviews"
+                  aria-live="polite"
+                >
+                  <AnimatePresence initial={false} custom={testimonialDir} mode="wait">
+                    <motion.article
+                      key={`${activeTestimonial.name}-${testimonialIndex}`}
+                      className={`testimonial-card${testimonialCardTone}`}
+                      custom={testimonialDir}
+                      variants={testimonialSlideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: r ? 0.12 : 0.38, ease: EASE }}
+                      drag={r || testimonialLen < 2 ? false : 'x'}
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.14}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -56) goTestimonial(1)
+                        else if (info.offset.x > 56) goTestimonial(-1)
+                      }}
+                    >
+                      <FaQuoteLeft className="testimonial-card__quote-ico" aria-hidden />
+                      <div
+                        className="testimonial-card__stars"
+                        aria-label={`${activeTestimonial.rating} out of 5 stars`}
+                      >
+                        {Array.from({ length: activeTestimonial.rating }).map((_, si) => (
+                          <FaStar key={si} className="testimonial-card__star" aria-hidden />
+                        ))}
+                      </div>
+                      <blockquote className="testimonial-card__body">
+                        {testimonialReviewTrim ? (
+                          <p className="testimonial-card__text">{activeTestimonial.review}</p>
+                        ) : (
+                          <p className="testimonial-card__text testimonial-card__text--muted">
+                            5-star rating — thank you for trusting PET CURE with your pet.
+                          </p>
+                        )}
+                      </blockquote>
+                      <footer className="testimonial-card__footer">
+                        <cite className="testimonial-card__name">{activeTestimonial.name}</cite>
+                      </footer>
+                    </motion.article>
+                  </AnimatePresence>
+                </div>
+              </div>
+              <div className="testimonials__dots" role="tablist" aria-label="Choose a review">
+                {testimonialList.map((item, di) => (
+                  <button
+                    key={`${item.name}-${di}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={di === testimonialIndex}
+                    aria-label={`Show review ${di + 1}: ${item.name}`}
+                    className={`testimonials__dot ${di === testimonialIndex ? 'is-active' : ''}`}
+                    onClick={() => {
+                      if (di !== testimonialIndex) {
+                        setTestimonialDir(di > testimonialIndex ? 1 : -1)
+                        setTestimonialIndex(di)
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+              {!r && testimonialLen > 1 ? (
+                <div
+                  className={`testimonials__progress ${testimonialsPaused ? 'is-paused' : ''}`}
+                  aria-hidden
+                >
+                  <div key={testimonialIndex} className="testimonials__progress-fill" />
+                </div>
+              ) : null}
             </motion.div>
           </motion.div>
         </motion.section>

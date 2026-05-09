@@ -54,6 +54,33 @@ export const site = {
       'In-house medicine facility — convenient access to pet medications and supplements. Full-service medical store on premises.',
     ],
   },
+  testimonials: {
+    title: 'What pet parents say',
+    lead: 'Honest feedback from people who have brought their companions to PET CURE.',
+    items: [
+      {
+        name: 'Ali Shan',
+        rating: 5,
+        review:
+          'Dr is a gem of a person and one of the very few vets that loves the animals as much as you do. been taking my cat to him for 2 years now and in any situation he is available and will give best advice. -Professionalism -Kindness -Putting scared animals at ease -Fair pricing -Truly caring about an animal’s well being',
+      },
+      {
+        name: 'Abdullah Arshad',
+        rating: 5,
+        review: 'Nice doctors.',
+      },
+      {
+        name: 'Naveedm Meher',
+        rating: 5,
+        review: '',
+      },
+      {
+        name: 'Hamza Najam',
+        rating: 5,
+        review: '',
+      },
+    ],
+  },
   hours: {
     title: 'Opening hours',
     rows: [{ day: 'Monday – Sunday', time: '8:00 a.m. – 10:00 p.m.' }],
