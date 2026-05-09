@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# After you deploy, set Sitemap to your real origin, e.g. https://yoursite.com/sitemap.xml
