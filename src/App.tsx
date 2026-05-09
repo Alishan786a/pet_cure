@@ -9,6 +9,7 @@ import {
   useTransform,
 } from 'framer-motion'
 import {
+  FaCircleCheck,
   FaClock,
   FaEnvelope,
   FaHeartPulse,
@@ -17,11 +18,13 @@ import {
   FaPaw,
   FaPhone,
   FaPills,
+  FaStar,
   FaStethoscope,
   FaStore,
   FaSyringe,
   FaTruckMedical,
 } from 'react-icons/fa6'
+import clinicHero from './assets/cat.jpg'
 import logo from './assets/logo.jpeg'
 import { ContactForm } from './ContactForm'
 import { DraggableWhatsApp } from './DraggableWhatsApp'
@@ -90,9 +93,12 @@ const NAV: { id: string; label: string }[] = [
 export default function App() {
   const [navOpen, setNavOpen] = useState(false)
   const [headerDense, setHeaderDense] = useState(false)
+  const [headerOnHero, setHeaderOnHero] = useState(true)
   const heroRef = useRef<HTMLElement | null>(null)
+  const heroBgIntroDone = useRef(false)
   const reduceMotion = useReducedMotion()
   const r = !!reduceMotion
+  const [heroShowContent, setHeroShowContent] = useState(r)
 
   const { scrollY, scrollYProgress } = useScroll()
   const scrollBar = useSpring(scrollYProgress, {
@@ -107,11 +113,25 @@ export default function App() {
   })
   const heroParallaxY = useTransform(heroScroll, [0, 1], [0, r ? 0 : 52])
 
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    setHeaderDense((d) => {
-      const next = latest > 36
-      return d === next ? d : next
-    })
+  useEffect(() => {
+    if (r) setHeroShowContent(true)
+  }, [r])
+
+  useEffect(() => {
+    if (r) return
+    const fallback = window.setTimeout(() => {
+      setHeroShowContent((v) => (v ? v : true))
+    }, 1600)
+    return () => window.clearTimeout(fallback)
+  }, [r])
+
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const el = heroRef.current
+    const bottom = el ? el.offsetTop + el.offsetHeight : typeof window !== 'undefined' ? window.innerHeight * 0.88 : 640
+    const onDarkHero = y < bottom - 48
+    setHeaderOnHero((p) => (p === onDarkHero ? p : onDarkHero))
+    const dense = !onDarkHero && y > 24
+    setHeaderDense((d) => (d === dense ? d : dense))
   })
 
   useEffect(() => {
@@ -176,6 +196,10 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [navOpen])
 
+  const tagParts = site.tagline.split(' — ')
+  const heroTitleMain = tagParts[0]?.trim() ?? site.tagline
+  const heroTitleSub = tagParts.length > 1 ? tagParts.slice(1).join(' — ').trim() : ''
+
   return (
     <div className="site">
       <motion.div
@@ -189,7 +213,7 @@ export default function App() {
       </a>
 
       <motion.header
-        className={`header${headerDense ? ' header--dense' : ''}`}
+        className={`header${headerDense ? ' header--dense' : ''}${headerOnHero ? ' header--over-hero' : ''}`}
         initial={r ? false : { y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={transitionBase(r, 0.65)}
@@ -290,35 +314,63 @@ export default function App() {
       </AnimatePresence>
 
       <main id="main">
-        <section ref={heroRef} className="hero" aria-labelledby="hero-heading">
-          <div className="hero__grid">
+        <section ref={heroRef} className="hero hero--cinema" aria-labelledby="hero-heading">
+          <motion.div
+            className="hero__bg"
+            aria-hidden
+            initial={r ? false : { opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={
+              r
+                ? { duration: 0 }
+                : { duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }
+            }
+            style={{
+              backgroundImage: `url(${clinicHero})`,
+              y: heroParallaxY,
+            }}
+            onAnimationComplete={() => {
+              if (r || heroBgIntroDone.current) return
+              heroBgIntroDone.current = true
+              setHeroShowContent(true)
+            }}
+          />
+          <div className="hero__scrim" aria-hidden />
+          <div className="hero__inner">
             <motion.div
-              className="hero__copy"
-              variants={staggerContainer(r, 0.13, 0.05)}
+              className="hero__copy hero__copy--cinema"
+              variants={staggerContainer(r, 0.12, 0.06)}
               initial="hidden"
-              animate="visible"
+              animate={heroShowContent ? 'visible' : 'hidden'}
             >
-              <motion.p className="eyebrow eyebrow--row" variants={fadeUpTight(r)}>
-                <FaPaw className="eyebrow__icon" aria-hidden />
-                {site.establishedNote}
-              </motion.p>
-              <motion.h1 id="hero-heading" className="hero__title" variants={blurIn(r)}>
-                {site.tagline}
+              <motion.div className="hero__trust" variants={fadeUpTight(r)}>
+                <span className="hero__stars" aria-hidden>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <FaStar key={i} className="hero__star" />
+                  ))}
+                </span>
+                <span className="hero__trust-text">{site.establishedNote}</span>
+              </motion.div>
+              <motion.h1 id="hero-heading" className="hero__headline" variants={blurIn(r)}>
+                <span className="hero__headline-main">{heroTitleMain}</span>
+                {heroTitleSub ? <span className="hero__headline-sub">{heroTitleSub}</span> : null}
               </motion.h1>
-              <motion.div className="hero__actions" variants={fadeUp(r)}>
+              <motion.div className="hero__actions hero__actions--cinema" variants={fadeUp(r)}>
                 <motion.a
-                  className="btn btn--primary"
+                  className="hero__cta-pill"
                   href={`tel:${site.phoneTel}`}
-                  whileHover={r ? undefined : { scale: 1.04, y: -2 }}
-                  whileTap={r ? undefined : { scale: 0.97 }}
+                  whileHover={r ? undefined : { scale: 1.03, y: -2 }}
+                  whileTap={r ? undefined : { scale: 0.98 }}
                   transition={springPop}
                 >
-                  <FaPhone className="btn__icon" aria-hidden />
-                  Call {site.phoneDisplay}
+                  <span className="hero__cta-pill-text">Call to book a visit</span>
+                  <span className="hero__cta-pill-icon" aria-hidden>
+                    <FaPhone />
+                  </span>
                 </motion.a>
                 <motion.button
                   type="button"
-                  className="btn btn--ghost"
+                  className="btn btn--ghost-on-dark"
                   onClick={() => scrollToId('hours')}
                   whileHover={r ? undefined : { scale: 1.03, y: -2 }}
                   whileTap={r ? undefined : { scale: 0.98 }}
@@ -328,19 +380,14 @@ export default function App() {
                   {site.heroCta}
                 </motion.button>
               </motion.div>
-            </motion.div>
-            <motion.div
-              className="hero__visual"
-              initial={r ? false : { opacity: 0, scale: 0.92, x: 24 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ ...transitionBase(r, 0.62), delay: r ? 0 : 0.22 }}
-              style={{ y: heroParallaxY }}
-            >
-              <MediaPlaceholder
-                label="Clinic photo — replace with your image"
-                variant="hero"
-                reduceMotion={r}
-              />
+              <motion.ul className="hero__bullets" variants={staggerContainer(r, 0.1, 0.02)}>
+                {site.heroBullets.map((line) => (
+                  <motion.li key={line} className="hero__bullet" variants={fadeUpTight(r)}>
+                    <FaCircleCheck className="hero__bullet-ico" aria-hidden />
+                    {line}
+                  </motion.li>
+                ))}
+              </motion.ul>
             </motion.div>
           </div>
         </section>

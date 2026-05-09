@@ -1,7 +1,7 @@
 /** Set VITE_SITE_URL in .env to your live domain (e.g. https://petcure.pk) for canonical & JSON-LD. */
 export const site = {
   clinicName: 'PET CURE',
-  tagline: 'Veterinary care in Lahore — clinic visits, home calls, and emergency support when your pet needs it most.',
+  tagline: 'Pet cure in Lahore — clinic visits, home calls, and emergency support when your pet needs it most.',
   phoneDisplay: '0304 9296100',
   phoneTel: '+923049296100',
   email: 'petcure00@gmail.com',
@@ -58,11 +58,11 @@ export const site = {
       'This site provides general information only and is not a substitute for professional veterinary advice. Always consult a qualified veterinarian for diagnosis and treatment.',
   },
   seo: {
-    title: 'PET CURE | Veterinary Clinic Lahore — Home Visits & Emergency Care',
+    title: 'PET CURE | Pet Clinic Lahore — Home Visits & Emergency Care',
     description:
-      'PET CURE veterinary clinic on Niazbeg Road, Thokar Niaz Baig, Lahore. Clinic & home visits, vaccination, emergency care, and on-site pet pharmacy. Open daily 8 AM – 10 PM.',
+      'PET CURE pet clinic on Niazbeg Road, Thokar Niaz Baig, Lahore. Clinic & home visits, vaccination, emergency care, and on-site pet pharmacy. Open daily 8 AM – 10 PM.',
     keywords:
-      'veterinary clinic Lahore, pet doctor Thokar Niaz Baig, home visit vet Pakistan, pet vaccination Lahore, emergency vet Lahore, PET CURE',
+      'PET CURE, pet clinic Lahore, pet doctor Thokar Niaz Baig, home visit vet Pakistan, pet vaccination Lahore, emergency vet Lahore',
     locale: 'en_PK',
     defaultOgImage: '/favicon/web-app-manifest-512x512.png',
   },
