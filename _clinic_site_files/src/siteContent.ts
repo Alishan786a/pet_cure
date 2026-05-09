@@ -37,10 +37,10 @@ export const site = {
     title: 'What we offer',
     subtitle: 'From routine check-ups to urgent care — modern diagnostics with a gentle approach.',
     items: [
-      'Clinic & home visits, check-ups, and emergency care — all under one roof.',
-      'Modern technology with a caring touch — trusted care for every stage of your pet’s life.',
+      'Clinic & home visits, check-ups, and emergency care — All under one roof.',
+      'Modern technology with a caring touch — Trusted care for every stage of your pet’s life.',
       'Vaccination and treatment to keep your pet healthy and safe.',
-      'In-house medicine facility — convenient access to pet medications and supplements. Full-service medical store on premises.',
+      'In-house medicine facility — Convenient access to pet medications and supplements. Full-service medical store on premises.',
     ],
   },
   hours: {
