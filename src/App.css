@@ -676,6 +676,7 @@
 }
 
 .wa-float {
+  position: relative;
   width: 58px;
   height: 58px;
   border-radius: 50%;
@@ -685,11 +686,16 @@
   cursor: grab;
   touch-action: none;
   user-select: none;
+  overflow: visible;
   background: linear-gradient(145deg, #25d366, #128c7e);
   color: #fff;
   box-shadow:
     0 4px 20px rgb(18 140 126 / 45%),
     0 2px 8px rgb(0 0 0 / 12%);
+}
+
+.wa-float:not(.wa-float--dragging) {
+  animation: wa-float-magnet 2.4s ease-in-out infinite;
 }
 
 .wa-float:active {
@@ -698,23 +704,150 @@
 
 .wa-float--dragging {
   cursor: grabbing;
+  animation: none;
   box-shadow:
     0 8px 28px rgb(18 140 126 / 55%),
     0 4px 12px rgb(0 0 0 / 15%);
 }
 
+.wa-float--dragging .wa-float__pulse,
+.wa-float--dragging .wa-float__glow,
+.wa-float--dragging .wa-float__ring {
+  animation: none;
+  opacity: 0;
+}
+
+.wa-float__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #4ade80;
+  pointer-events: none;
+  z-index: 0;
+  animation: wa-float-ripple 2.8s ease-out infinite;
+}
+
+.wa-float__pulse--b {
+  animation-delay: 1.4s;
+}
+
 .wa-float__ring {
   position: absolute;
-  inset: -4px;
+  inset: -5px;
   border-radius: 50%;
-  border: 2px solid color-mix(in srgb, #25d366 55%, transparent);
+  border: 2px solid color-mix(in srgb, #ffffff 45%, #25d366);
   pointer-events: none;
+  z-index: 0;
+  animation: wa-float-ring-pulse 1.6s ease-in-out infinite;
+}
+
+.wa-float__glow {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, #25d366 55%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+  animation: wa-float-glow 2.2s ease-in-out infinite;
 }
 
 .wa-float__icon {
   font-size: 2rem;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 25%));
+}
+
+.wa-float:not(.wa-float--dragging) .wa-float__icon {
+  animation: wa-float-icon-pop 2.4s ease-in-out infinite;
+}
+
+@keyframes wa-float-magnet {
+  0%,
+  100% {
+    transform: scale(1) translateY(0);
+    box-shadow:
+      0 4px 20px rgb(18 140 126 / 45%),
+      0 2px 8px rgb(0 0 0 / 12%);
+  }
+  40% {
+    transform: scale(1.07) translateY(-4px);
+    box-shadow:
+      0 10px 32px rgb(37 211 102 / 55%),
+      0 4px 14px rgb(0 0 0 / 14%);
+  }
+  55% {
+    transform: scale(1.04) translateY(-2px);
+  }
+}
+
+@keyframes wa-float-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(2.35);
+    opacity: 0;
+  }
+}
+
+@keyframes wa-float-ring-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes wa-float-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes wa-float-icon-pop {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  12% {
+    transform: scale(1.12) rotate(-6deg);
+  }
+  24% {
+    transform: scale(1.08) rotate(6deg);
+  }
+  36% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-float:not(.wa-float--dragging),
+  .wa-float__pulse,
+  .wa-float__ring,
+  .wa-float__glow,
+  .wa-float__icon {
+    animation: none !important;
+  }
+
+  .wa-float__pulse {
+    opacity: 0;
+  }
 }
 
 .media-ph {

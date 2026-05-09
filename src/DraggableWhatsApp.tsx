@@ -111,7 +111,10 @@ export function DraggableWhatsApp({ href, label }: { href: string; label: string
         }
       }}
     >
+      <span className="wa-float__pulse wa-float__pulse--a" aria-hidden />
+      <span className="wa-float__pulse wa-float__pulse--b" aria-hidden />
       <span className="wa-float__ring" aria-hidden />
+      <span className="wa-float__glow" aria-hidden />
       <FaWhatsapp className="wa-float__icon" aria-hidden />
     </div>
   )
