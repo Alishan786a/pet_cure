@@ -1694,6 +1694,23 @@
     justify-content: center;
   }
 
+  /**
+   * Drawer uses light `--color-bg`; `header--over-hero` otherwise forces pale link text
+   * (meant for on-photo header), which made About/Services/etc. invisible on mobile.
+   */
+  .header--over-hero:not(.header--dense) .nav .nav__link {
+    color: var(--color-text);
+  }
+
+  .header--over-hero:not(.header--dense) .nav .nav__link:hover {
+    background: var(--color-surface);
+    color: var(--color-heading);
+  }
+
+  .nav {
+    z-index: 125;
+  }
+
   .nav-backdrop {
     display: block;
     position: fixed;
