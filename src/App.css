@@ -403,82 +403,6 @@
   border-color: color-mix(in srgb, #fff 55%, transparent);
 }
 
-.about-cinema {
-  position: relative;
-  isolation: isolate;
-  min-height: min(88vh, 820px);
-  padding: clamp(96px, 14vh, 132px) 24px clamp(56px, 8vh, 88px);
-  overflow: hidden;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.about-cinema__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transform-origin: center center;
-  will-change: transform, opacity;
-}
-
-.about-cinema__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-      118deg,
-      rgb(8 18 16 / 0.9) 0%,
-      rgb(8 18 16 / 0.74) 40%,
-      rgb(12 26 24 / 0.5) 72%,
-      rgb(8 18 16 / 0.38) 100%
-    ),
-    linear-gradient(to top, rgb(8 18 16 / 0.58) 0%, transparent 46%);
-}
-
-.about-cinema__inner {
-  position: relative;
-  z-index: 2;
-  max-width: 720px;
-  margin: 0;
-}
-
-.about-cinema .section__title {
-  color: #fff;
-}
-
-.about-cinema .section__title-ico {
-  color: #5eead4;
-}
-
-.about-cinema .section__lead {
-  color: color-mix(in srgb, #fff 88%, #a7f3d0);
-}
-
-.about-cinema__cards {
-  max-width: 640px;
-}
-
-.about-cinema .card--on-dark {
-  background: color-mix(in srgb, #fff 9%, rgb(12 28 26 / 55%));
-  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
-  box-shadow: 0 12px 36px rgb(0 0 0 / 22%);
-}
-
-.about-cinema .card--on-dark .card__title {
-  color: #fff;
-}
-
-.about-cinema .card--on-dark .card__ico {
-  color: #5eead4;
-}
-
-.about-cinema .card--on-dark .card__text {
-  color: color-mix(in srgb, #fff 86%, transparent);
-}
-
 .eyebrow {
   margin: 0 0 14px;
   font-size: 0.82rem;
@@ -1219,24 +1143,6 @@
   .hero--cinema .hero__inner {
     margin-inline: auto;
     max-width: 640px;
-  }
-
-  .about-cinema__inner {
-    margin-inline: auto;
-    max-width: 640px;
-    text-align: center;
-  }
-
-  .about-cinema .section__title--row {
-    justify-content: center;
-  }
-
-  .about-cinema .section__lead {
-    margin-inline: auto;
-  }
-
-  .about-cinema__cards {
-    margin-inline: auto;
   }
 
   .hero__copy--cinema {

@@ -28,7 +28,6 @@ import heroBg1 from './assets/cat.jpg'
 import heroBg2 from './assets/cat2.jpg'
 import heroBg3 from './assets/cat3.jpg'
 import heroBg4 from './assets/cat4.jpg'
-import medicalStoreBg from './assets/medical-store.png'
 import logo from './assets/logo.jpeg'
 import { ContactForm } from './ContactForm'
 import { DraggableWhatsApp } from './DraggableWhatsApp'
@@ -103,13 +102,10 @@ export default function App() {
   const [headerOnHero, setHeaderOnHero] = useState(true)
   const heroRef = useRef<HTMLElement | null>(null)
   const heroBgIntroDone = useRef(false)
-  const aboutRef = useRef<HTMLElement | null>(null)
-  const aboutBgIntroDone = useRef(false)
   const reduceMotion = useReducedMotion()
   const r = !!reduceMotion
   const [heroShowContent, setHeroShowContent] = useState(r)
   const [heroSlide, setHeroSlide] = useState(0)
-  const [aboutShowContent, setAboutShowContent] = useState(r)
 
   const { scrollY, scrollYProgress } = useScroll()
   const scrollBar = useSpring(scrollYProgress, {
@@ -124,17 +120,8 @@ export default function App() {
   })
   const heroParallaxY = useTransform(heroScroll, [0, 1], [0, r ? 0 : 52])
 
-  const { scrollYProgress: aboutScroll } = useScroll({
-    target: aboutRef,
-    offset: ['start end', 'end start'],
-  })
-  const aboutParallaxY = useTransform(aboutScroll, [0, 1], [0, r ? 0 : 40])
-
   useEffect(() => {
-    if (r) {
-      setHeroShowContent(true)
-      setAboutShowContent(true)
-    }
+    if (r) setHeroShowContent(true)
   }, [r])
 
   useEffect(() => {
@@ -432,57 +419,39 @@ export default function App() {
           </div>
         </section>
 
-        <section
-          ref={aboutRef}
+        <motion.section
           id="about"
-          className="about-cinema"
+          className="section section--alt"
           aria-labelledby="about-heading"
+          initial={r ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportOnce}
+          transition={transitionBase(r, 0.5)}
         >
           <motion.div
-            className="about-cinema__bg"
-            aria-hidden
-            initial={r ? false : { opacity: 0, scale: 1.08 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.28 }}
-            transition={
-              r
-                ? { duration: 0 }
-                : { duration: 0.95, ease: [0.22, 0.61, 0.36, 1] }
-            }
-            style={{
-              backgroundImage: `url(${medicalStoreBg})`,
-              y: aboutParallaxY,
-            }}
-            onAnimationComplete={() => {
-              if (r || aboutBgIntroDone.current) return
-              aboutBgIntroDone.current = true
-              setAboutShowContent(true)
-            }}
-          />
-          <div className="about-cinema__scrim" aria-hidden />
-          <div className="section__inner about-cinema__inner">
-            <motion.div
-              className="about-cinema__copy"
-              variants={staggerContainer(r, 0.11, 0.06)}
-              initial="hidden"
-              animate={aboutShowContent ? 'visible' : 'hidden'}
-            >
-              <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
-                <FaPaw className="section__title-ico" aria-hidden />
-                {site.about.title}
-              </motion.h2>
-              <motion.p className="section__lead" variants={fadeUp(r)}>
-                {site.about.lead}
-              </motion.p>
-              <motion.ul className="cards about-cinema__cards" variants={staggerContainer(r, 0.1, 0)}>
+            className="section__inner"
+            variants={staggerContainer(r, 0.09, 0.02)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
+            <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
+              <FaPaw className="section__title-ico" aria-hidden />
+              {site.about.title}
+            </motion.h2>
+            <motion.p className="section__lead" variants={fadeUp(r)}>
+              {site.about.lead}
+            </motion.p>
+            <motion.div className="about-split" variants={staggerContainer(r, 0.14, 0.06)}>
+              <motion.ul className="cards" variants={staggerContainer(r, 0.1, 0)}>
                 {site.about.points.map((p, i) => {
                   const AboutIcon = ABOUT_ICONS[i]
                   return (
                     <motion.li
                       key={p.title}
-                      className="card card--on-dark"
+                      className="card"
                       variants={slideInRight(r)}
-                      whileHover={r ? undefined : { y: -6, boxShadow: '0 20px 48px rgb(0 0 0 / 28%)' }}
+                      whileHover={r ? undefined : { y: -6, boxShadow: '0 16px 40px rgb(18 16 14 / 12%)' }}
                       whileTap={r ? undefined : { scale: 0.99 }}
                       transition={springSoft}
                     >
@@ -501,9 +470,16 @@ export default function App() {
                   )
                 })}
               </motion.ul>
+              <motion.div variants={scaleIn(r)}>
+                <MediaPlaceholder
+                  label="Team or clinic interior — replace with your image"
+                  variant="square"
+                  reduceMotion={r}
+                />
+              </motion.div>
             </motion.div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         <motion.section
           id="services"
