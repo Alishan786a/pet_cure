@@ -84,7 +84,7 @@ export const site = {
     keywords:
       'PET CURE, pet clinic Lahore, pet doctor Thokar Niaz Baig, home visit vet Pakistan, pet vaccination Lahore, emergency vet Lahore',
     locale: 'en_PK',
-    defaultOgImage: '/favicon/favicon.svg',
+    defaultOgImage: 'favicon/favicon.svg',
   },
 } as const
 
@@ -96,7 +96,17 @@ export function getSiteUrl(): string {
   if (typeof window === 'undefined') {
     return ''
   }
-  const origin = window.location.origin
-  const pathBase = (import.meta.env.BASE || '/').replace(/\/$/, '')
-  return pathBase ? `${origin}${pathBase}` : origin
+  const { origin, pathname } = window.location
+  const viteBase = import.meta.env.BASE_URL || '/'
+
+  if (viteBase.startsWith('/') && viteBase.length > 1) {
+    const path = viteBase.replace(/\/$/, '')
+    return `${origin}${path}`
+  }
+
+  const pathOnly = pathname.endsWith('/')
+    ? pathname.slice(0, -1)
+    : pathname.replace(/\/[^/]+$/, '')
+  const joined = pathOnly ? `${origin}${pathOnly}` : origin
+  return joined.replace(/\/$/, '') || origin
 }

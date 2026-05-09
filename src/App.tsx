@@ -191,8 +191,9 @@ export default function App() {
     }
 
     setMeta('property', 'og:url', canonical)
-    setMeta('property', 'og:image', `${base}${site.seo.defaultOgImage}`)
-    setMeta('name', 'twitter:image', `${base}${site.seo.defaultOgImage}`)
+    const ogImageUrl = new URL(site.seo.defaultOgImage, `${base}/`).href
+    setMeta('property', 'og:image', ogImageUrl)
+    setMeta('name', 'twitter:image', ogImageUrl)
   }, [])
 
   useEffect(() => {

@@ -11,7 +11,7 @@ export function buildLocalBusinessJsonLd(): object {
     url,
     telephone: site.phoneTel,
     email: site.email,
-    image: url ? `${url}${site.seo.defaultOgImage}` : site.seo.defaultOgImage,
+    image: url ? new URL(site.seo.defaultOgImage, `${url}/`).href : site.seo.defaultOgImage,
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'F6QP+PXV, Niazbeg Road, Thokar Niaz Baig',
