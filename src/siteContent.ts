@@ -26,24 +26,6 @@ export const site = {
     'Vaccination, treatment, and on-site pharmacy',
     'Emergency support when minutes matter',
   ],
-  about: {
-    title: 'Care built around your pet',
-    lead: 'At PET CURE we treat every animal like family — calm handling, clear explanations, and treatment plans you can follow at home.',
-    points: [
-      {
-        title: 'Clinic & home visits',
-        text: 'Bring your pet to our facility or request a home visit when travel is difficult. Same team, consistent records.',
-      },
-      {
-        title: 'Emergency-ready mindset',
-        text: 'When something goes wrong, you need a team that responds quickly. We prioritize urgent cases and guide you on next steps.',
-      },
-      {
-        title: 'On-site pharmacy',
-        text: 'Prescribed medications and quality supplements available on premises so you can start treatment without an extra stop.',
-      },
-    ],
-  },
   services: {
     title: 'What we offer',
     subtitle: 'From routine check-ups to urgent care — modern diagnostics with a gentle approach.',

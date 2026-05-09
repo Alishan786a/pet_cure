@@ -14,22 +14,22 @@ import {
   FaClock,
   FaEnvelope,
   FaHeartPulse,
-  FaHouseMedical,
   FaLocationDot,
-  FaPaw,
   FaPhone,
-  FaPills,
   FaQuoteLeft,
   FaStar,
   FaStethoscope,
   FaStore,
   FaSyringe,
-  FaTruckMedical,
 } from 'react-icons/fa6'
 import heroBg1 from './assets/cat.jpg'
 import heroBg2 from './assets/cat2.jpg'
 import heroBg3 from './assets/cat3.jpg'
 import heroBg4 from './assets/cat4.jpg'
+import aboutCardImg1 from './assets/card1.jpg'
+import aboutCardImg2 from './assets/card2.jpg'
+import aboutCardImg3 from './assets/card3.jpg'
+import aboutCardImg4 from './assets/card4.jpg'
 import logo from './assets/logo.jpeg'
 import { ContactForm } from './ContactForm'
 import { DraggableWhatsApp } from './DraggableWhatsApp'
@@ -55,15 +55,25 @@ const HERO_BG_IMAGES = [heroBg1, heroBg2, heroBg3, heroBg4] as const
 /** Testimonial autoplay + progress bar (keep in sync with CSS `var(--testimonial-ms)` fallback). */
 const TESTIMONIAL_AUTO_MS = 3600
 
-const ABOUT_ICONS = [FaHouseMedical, FaTruckMedical, FaPills] as const
+const SERVICE_ZIGZAG_IMAGES = [aboutCardImg1, aboutCardImg2, aboutCardImg3, aboutCardImg4] as const
+
 const SERVICE_ICONS = [FaStethoscope, FaHeartPulse, FaSyringe, FaStore] as const
+
+/** Split service copy on an em dash when present; otherwise one block of text. */
+function serviceItemHeadlineAndDetail(item: string): { headline: string; detail: string } {
+  const sep = ' — '
+  const i = item.indexOf(sep)
+  if (i === -1) {
+    return { headline: '', detail: item }
+  }
+  return { headline: item.slice(0, i).trim(), detail: item.slice(i + sep.length).trim() }
+}
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 }
 
 const NAV: { id: string; label: string }[] = [
-  { id: 'about', label: 'About' },
   { id: 'services', label: 'Services' },
   { id: 'testimonials', label: 'Reviews' },
   { id: 'hours', label: 'Hours' },
@@ -439,9 +449,9 @@ export default function App() {
         </section>
 
         <motion.section
-          id="about"
+          id="services"
           className="section section--alt"
-          aria-labelledby="about-heading"
+          aria-labelledby="services-heading"
           initial={r ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={viewportOnce}
@@ -454,59 +464,6 @@ export default function App() {
             whileInView="visible"
             viewport={viewportOnce}
           >
-            <motion.h2 id="about-heading" className="section__title section__title--row" variants={fadeUp(r)}>
-              <FaPaw className="section__title-ico" aria-hidden />
-              {site.about.title}
-            </motion.h2>
-            <motion.p className="section__lead" variants={fadeUp(r)}>
-              {site.about.lead}
-            </motion.p>
-            <motion.ul className="cards" variants={staggerContainer(r, 0.1, 0)}>
-              {site.about.points.map((p, i) => {
-                const AboutIcon = ABOUT_ICONS[i]
-                return (
-                  <motion.li
-                    key={p.title}
-                    className="card"
-                    variants={slideInRight(r)}
-                    whileHover={r ? undefined : { y: -6, boxShadow: '0 16px 40px rgb(18 16 14 / 12%)' }}
-                    whileTap={r ? undefined : { scale: 0.99 }}
-                    transition={springSoft}
-                  >
-                    <h3 className="card__title">
-                      <motion.span
-                        className="card__ico-wrap"
-                        whileHover={r ? undefined : { rotate: [0, -8, 8, 0] }}
-                        transition={{ duration: 0.45 }}
-                      >
-                        <AboutIcon className="card__ico" aria-hidden />
-                      </motion.span>
-                      {p.title}
-                    </h3>
-                    <p className="card__text">{p.text}</p>
-                  </motion.li>
-                )
-              })}
-            </motion.ul>
-          </motion.div>
-        </motion.section>
-
-        <motion.section
-          id="services"
-          className="section"
-          aria-labelledby="services-heading"
-          initial={r ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={viewportOnce}
-          transition={transitionBase(r, 0.45)}
-        >
-          <motion.div
-            className="section__inner"
-            variants={staggerContainer(r, 0.1, 0.04)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOnce}
-          >
             <motion.h2 id="services-heading" className="section__title section__title--row" variants={fadeUp(r)}>
               <FaStethoscope className="section__title-ico" aria-hidden />
               {site.services.title}
@@ -514,37 +471,79 @@ export default function App() {
             <motion.p className="section__lead section__lead--narrow" variants={fadeUp(r)}>
               {site.services.subtitle}
             </motion.p>
-            <motion.div className="services-grid" variants={staggerContainer(r, 0.09, 0.02)}>
+            <div className="about-zigzag">
               {site.services.items.map((item, i) => {
                 const SvcIcon = SERVICE_ICONS[i]
+                const imgSrc = SERVICE_ZIGZAG_IMAGES[i]
+                const reverse = i % 2 === 1
+                const step = String(i + 1).padStart(2, '0')
+                const { headline, detail } = serviceItemHeadlineAndDetail(item)
                 return (
                   <motion.article
-                    key={item}
-                    className="service-card"
-                    variants={fadeUpTight(r)}
-                    whileHover={
-                      r
-                        ? undefined
-                        : {
-                            y: -8,
-                            scale: 1.02,
-                            boxShadow: '0 20px 48px rgb(18 16 14 / 14%)',
-                          }
-                    }
-                    whileTap={r ? undefined : { scale: 0.98 }}
+                    key={`svc-${i}`}
+                    className={`about-zigzag__row${reverse ? ' about-zigzag__row--reverse' : ''}`}
+                    variants={fadeUp(r)}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={viewportOnce}
+                    whileHover={r ? undefined : { y: -3 }}
                     transition={springSoft}
                   >
-                    <div className="service-card__top">
-                      <SvcIcon className="service-card__ico" aria-hidden />
-                      <span className="service-card__num" aria-hidden>
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
+                    <div className="about-zigzag__copy">
+                      <div
+                        className={`about-zigzag__panel${headline ? '' : ' about-zigzag__panel--solo'}`}
+                      >
+                        <span className="about-zigzag__step" aria-hidden>
+                          {step}
+                        </span>
+                        {headline ? (
+                          <>
+                            <h3 className="about-zigzag__title">
+                              <motion.span
+                                className="about-zigzag__ico-wrap"
+                                whileHover={r ? undefined : { rotate: [0, -8, 8, 0] }}
+                                transition={{ duration: 0.45 }}
+                              >
+                                <SvcIcon className="about-zigzag__ico" aria-hidden />
+                              </motion.span>
+                              {headline}
+                            </h3>
+                            <p className="about-zigzag__blurb">{detail}</p>
+                          </>
+                        ) : (
+                          <>
+                            <div className="about-zigzag__solo-head">
+                              <motion.span
+                                className="about-zigzag__ico-wrap"
+                                whileHover={r ? undefined : { rotate: [0, -8, 8, 0] }}
+                                transition={{ duration: 0.45 }}
+                              >
+                                <SvcIcon className="about-zigzag__ico" aria-hidden />
+                              </motion.span>
+                            </div>
+                            <p className="about-zigzag__blurb about-zigzag__blurb--solo">{detail}</p>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <p className="service-card__text">{item}</p>
+                    <div className="about-zigzag__media">
+                      <div
+                        className={`about-zigzag__frame${reverse ? ' about-zigzag__frame--tilt-r' : ' about-zigzag__frame--tilt-l'}`}
+                      >
+                        <span className="about-zigzag__frame-edge" aria-hidden />
+                        <img
+                          src={imgSrc}
+                          alt=""
+                          className="about-zigzag__img"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+                    </div>
                   </motion.article>
                 )
               })}
-            </motion.div>
+            </div>
           </motion.div>
         </motion.section>
 
