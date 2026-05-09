@@ -43,8 +43,15 @@ export function ContactForm() {
 
   return (
     <div className="contact-form-wrap" id="message">
-      <h3 className="contact-form__heading">Send a message</h3>
-      <p className="contact-form__hint">We usually reply within one business day.</p>
+      <div className="contact-form__top">
+        <span className="contact-form__mark" aria-hidden>
+          <FaPaperPlane className="contact-form__mark-ico" />
+        </span>
+        <div className="contact-form__top-text">
+          <h3 className="contact-form__heading">Send a message</h3>
+          <p className="contact-form__hint">We usually reply within one business day.</p>
+        </div>
+      </div>
       <form className="contact-form" onSubmit={handleSubmit}>
         <label className="contact-form__field">
           <span className="contact-form__label">Name</span>
@@ -106,7 +113,7 @@ export function ContactForm() {
         </label>
         <div className="contact-form__actions">
           <button className="btn btn--primary contact-form__submit" type="submit" disabled={status === 'sending'}>
-            <FaPaperPlane aria-hidden style={{ marginRight: 8 }} />
+            <FaPaperPlane className="btn__icon" aria-hidden />
             {status === 'sending' ? 'Sending…' : 'Send message'}
           </button>
           {status === 'success' ? (
