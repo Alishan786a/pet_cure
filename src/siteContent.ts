@@ -12,7 +12,12 @@ export const site = {
       'Pakistan',
     ],
     mapsUrl: 'https://maps.app.goo.gl/EyCYN491RLMrXzDj6',
+    mapsEmbedSrc:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8732.422556921143!2d74.23686486124112!3d31.496764316433488!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391903006e0860c3%3A0xe74082b95c55cf56!2sPet%20Cure%20Clinic%20and%20Medical%20Store!5e0!3m2!1sen!2s!4v1778334234899!5m2!1sen!2s',
   },
+  whatsAppHref:
+    'https://wa.me/923049296100?text=' +
+    encodeURIComponent('Hello PET CURE, I would like to ask about '),
   establishedNote: 'Lahore · Clinic & home visits',
   heroCta: 'Hours & location',
   about: {
